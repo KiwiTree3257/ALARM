@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"E:\\\\FlutterApps\\\\ALARM\\\\alarm_app\" -Recurse -Depth 3 | Where-Object { !$_.FullName.Contains\\('.dart_tool'\\) -and !$_.FullName.Contains\\('.gradle'\\) -and !$_.FullName.Contains\\('build\\\\'\\) -and !$_.FullName.Contains\\('.pub-cache'\\) } | Select-Object FullName, PSIsContainer | Format-Table -AutoSize)"
+    ]
+  }
+}
