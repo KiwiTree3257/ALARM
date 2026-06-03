@@ -5,7 +5,7 @@
 Flutter 기반 Android 알람 앱. 단순한 알람이 아닌 **무조건 깨우는** 알람 앱.
 
 - 주요 플랫폼: **Android** (iOS는 부차적)
-- 현재 상태: `flutter create` 직후 초기 상태 (`lib/main.dart`에 Hello World만 있음)
+- 현재 상태: **1단계 완료** — 패키지 설치, Android 권한/서비스 설정, Kotlin 서비스 스켈레톤 완성
 
 ---
 
@@ -107,10 +107,46 @@ abstract class AlarmMission {
 
 ## 개발 순서
 
-1. **기반 설정** — 패키지 추가, Android 권한 설정, 포그라운드 서비스
-2. **알람 기본 기능** — 생성/삭제/목록, 소리/볼륨 설정
-3. **알람 등급 시스템** — A~D 등급 설정 UI
-4. **잠금화면 침투 + 볼륨 차단** — 반칙 방지 핵심
-5. **기상 모니터링** — 가속도계 + 재확인 알림
-6. **미션 시스템 뼈대** — 추후 미션 추가를 위한 추상 구조
-7. **UI/UX 완성**
+1. ✅ **기반 설정** — 패키지 추가, Android 권한 설정, 포그라운드 서비스
+2. ⬜ **알람 기본 기능** — 생성/삭제/목록, 소리/볼륨 설정
+3. ⬜ **알람 등급 시스템** — A~D 등급 설정 UI
+4. ⬜ **잠금화면 침투 + 볼륨 차단** — 반칙 방지 핵심
+5. ⬜ **기상 모니터링** — 가속도계 + 재확인 알림
+6. ⬜ **미션 시스템 뼈대** — 추후 미션 추가를 위한 추상 구조
+7. ⬜ **UI/UX 완성**
+
+---
+
+## 1단계 완료 상세 (2026-06-03)
+
+### 설치된 패키지 (pubspec.yaml)
+- `alarm ^5.4.1` — AlarmManager 기반 정확한 알람 스케줄링
+- `flutter_foreground_task ^8.13.0` — 포그라운드 서비스 관리
+- `sensors_plus ^6.1.0` — 가속도계 (재취침 감지)
+- `audioplayers ^6.4.0` — 커스텀 알람 소리 재생
+- `flutter_local_notifications ^18.0.0` — 주기적 기상 확인 알림
+- `permission_handler ^11.4.0` — 런타임 권한 요청
+
+### Android 설정
+- `minSdk = 23` (build.gradle.kts) — SCHEDULE_EXACT_ALARM 요구사항
+- AndroidManifest.xml에 권한 10개 선언
+- `showWhenLocked`, `turnScreenOn` — 잠금화면 침투 속성 추가
+
+### 생성된 Kotlin 파일
+| 파일 | 역할 | 상태 |
+|------|------|------|
+| `AlarmForegroundService.kt` | WakeLock + 등급별 볼륨 정책 | 스켈레톤 완성 |
+| `WakeMonitorService.kt` | 가속도계 정지 감지 + 주기 확인 | 스켈레톤 완성 |
+| `BootReceiver.kt` | 재부팅 후 알람 복구 수신 | 스켈레톤 완성 |
+
+### main.dart
+- `Alarm.init()` 초기화
+- `FlutterForegroundTask.initCommunicationPort()` 초기화
+- 런타임 권한 요청 화면 (scheduleExactAlarm, notification, ignoreBatteryOptimizations)
+
+### 미연결 항목 (이후 단계에서 처리)
+- Flutter ↔ Kotlin 간 MethodChannel 연결 (2단계)
+- `WakeMonitorService.triggerReAlarm()` → Flutter 콜백 (5단계)
+- 볼륨 버튼 차단 `MainActivity.onKeyDown` (4단계)
+- `WakeMonitorService.sendWakeCheckNotification()` 구현 (5단계)
+- 등급별 `stillThresholdSec` 파라미터 연결 (3단계)

@@ -1,5 +1,5 @@
 name: alarm_app
-description: "A new Flutter project."
+description: "무조건 깨우는 알람 앱"
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -9,6 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  alarm: ^5.4.1
+  flutter_foreground_task: ^8.13.0
+  sensors_plus: ^6.1.0
+  audioplayers: ^6.4.0
+  flutter_local_notifications: ^18.0.0
+  permission_handler: ^11.4.0
 
 dev_dependencies:
   flutter_test:
